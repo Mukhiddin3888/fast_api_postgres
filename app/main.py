@@ -5,12 +5,11 @@
 
 import time
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-from pydantic import BaseModel
 import psycopg2
 from psycopg2.extras import RealDictCursor
-
+from typing import List
 from sqlalchemy.orm import Session
-from app import models
+from app import models, schemas
 from app.database import engine,  get_db
 
 models.Base.metadata.create_all(bind = engine)
@@ -20,10 +19,7 @@ app = FastAPI()
 
 
 
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
+
     
 while True:
     try: 
@@ -37,27 +33,27 @@ while True:
         time.sleep(2)
     
 
-@app.get("/get-posts")
+@app.get("/get-posts", response_model= List[schemas.PostResponse])
 def get_posts(db: Session = Depends(get_db)):
     
     posts = db.query(models.Post).all()
   
-    return {"data": posts}
+    return posts
 
 
 
-@app.get("/get-post-by-id/{id}")
+@app.get("/get-post-by-id/{id}", response_model=schemas.PostResponse)
 def get_post_by_id(id:int, db: Session = Depends(get_db)):
     
     post = db.query(models.Post).filter(models.Post.id == id).first()
     print(post)
     if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{id} not found")
-    return {"data": post}
+    return post
 
 
-@app.post("/create-post", status_code=status.HTTP_201_CREATED)
-def create_post(post :Post ,db: Session = Depends(get_db)):
+@app.post("/create-post", status_code=status.HTTP_201_CREATED, response_model = schemas.PostResponse)
+def create_post(post : schemas.PostBase ,db: Session = Depends(get_db)):
     
 #    new_post = models.Post(title = post.title, content = post.content, published = post.published, )
 #    **post.dict() 
@@ -66,11 +62,11 @@ def create_post(post :Post ,db: Session = Depends(get_db)):
    db.add(new_post)
    db.commit()
    db.refresh(new_post)
-   return {"data":new_post }
+   return new_post 
 
 
-@app.put("/update-post/{id}")
-def update_post(id:int, post: Post, db: Session = Depends(get_db)):
+@app.put("/update-post/{id}", response_model=schemas.PostResponse)
+def update_post(id:int, post: schemas.PostBase, db: Session = Depends(get_db)):
     
     current_post = db.query(models.Post).filter(models.Post.id == id)
     
@@ -85,7 +81,7 @@ def update_post(id:int, post: Post, db: Session = Depends(get_db)):
     
     db.commit()
     
-    return {"data": current_post.first()}
+    return current_post.first()
 
 
 
