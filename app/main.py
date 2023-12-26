@@ -1,4 +1,8 @@
 # Python version 3.11.5
+# uvicorn app.main:app --reload
+
+
+
 import time
 from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException, Depends
@@ -9,20 +13,13 @@ from psycopg2.extras import RealDictCursor
 
 from sqlalchemy.orm import Session
 from app import models
-from app.database import engine, SessionLocal
+from app.database import engine,  get_db
 
 models.Base.metadata.create_all(bind = engine)
 
 
 app = FastAPI()
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 class Post(BaseModel):
