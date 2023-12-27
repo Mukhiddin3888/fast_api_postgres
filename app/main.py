@@ -13,12 +13,10 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import List
 from sqlalchemy.orm import Session
-from app import models, schemas
+from app import models, schemas, utils
 from app.database import engine,  get_db
-from passlib.context import CryptContext
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 models.Base.metadata.create_all(bind = engine)
 
@@ -111,9 +109,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 def create_user( user: schemas.UserCreate ,db: Session = Depends(get_db)):
     
    # hash user's password
-   
-   hashed_password = pwd_context.hash(user.password) 
-   user.password = hashed_password
+   user.password = utils.hashPassword(password=user.password)
     
    new_user = models.User(**user.dict() )
    db.add(new_user)
