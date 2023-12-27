@@ -1,7 +1,9 @@
 # Python version 3.11.5
+# source "/Users/abbosbobomurodov/Desktop/python tutorial/freecodecampPython/venv/bin/activate"
 # uvicorn app.main:app --reload
 # https://www.youtube.com/watch?v=0sOvCWFmrtA
 
+# pip freeze > requirements.txt
 
 import time
 from fastapi import FastAPI, Response, status, HTTPException, Depends
@@ -11,6 +13,10 @@ from typing import List
 from sqlalchemy.orm import Session
 from app import models, schemas
 from app.database import engine,  get_db
+from passlib.context import CryptContext
+
+
+# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 models.Base.metadata.create_all(bind = engine)
 
@@ -97,3 +103,27 @@ def delete_post(id: int, db: Session = Depends(get_db)):
     db.commit()
     
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@app.post("/create-user", response_model=schemas.UserResponse, status_code=status.HTTP_201_CREATED)
+def create_user( user: schemas.UserCreate ,db: Session = Depends(get_db)):
+    
+   # hash user's password
+   
+#    hashed_password = pwd_context.hash(user.password) 
+#    user.password = hashed_password
+    
+   new_user = models.User(**user.dict() )
+   db.add(new_user)
+   db.commit()
+   db.refresh(new_user)
+   return new_user 
+
+
+@app.get("/get-user", response_model= List[schemas.UserResponse])
+def get_users(db: Session = Depends(get_db)):
+    
+    users = db.query(models.User).all()
+  
+    return users
+
