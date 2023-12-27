@@ -30,6 +30,7 @@ class UserResponse(BaseModel):
     id:int
     email: str
     created_at: datetime
+    password:str
     
     class Config:
         orm_mode = True

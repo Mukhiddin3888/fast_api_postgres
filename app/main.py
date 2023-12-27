@@ -5,6 +5,8 @@
 
 # pip freeze > requirements.txt
 
+
+
 import time
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 import psycopg2
@@ -16,7 +18,7 @@ from app.database import engine,  get_db
 from passlib.context import CryptContext
 
 
-# pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 models.Base.metadata.create_all(bind = engine)
 
@@ -110,8 +112,8 @@ def create_user( user: schemas.UserCreate ,db: Session = Depends(get_db)):
     
    # hash user's password
    
-#    hashed_password = pwd_context.hash(user.password) 
-#    user.password = hashed_password
+   hashed_password = pwd_context.hash(user.password) 
+   user.password = hashed_password
     
    new_user = models.User(**user.dict() )
    db.add(new_user)

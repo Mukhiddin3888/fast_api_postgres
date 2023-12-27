@@ -1,3 +1,8 @@
+# python3 -m venv venv
+# source "/Users/abbosbobomurodov/Desktop/python tutorial/freecodecampPython/venv/bin/activate"
+# uvicorn app.main:app --reload
+
+# pip freeze > requirements.txt
 annotated-types==0.6.0
 anyio==4.2.0
 fastapi==0.108.0
