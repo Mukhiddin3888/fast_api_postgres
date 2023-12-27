@@ -40,3 +40,16 @@ def get_user_by_id(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"user with id: {id} not found")
     
     return user
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(id: int, db: Session = Depends(get_db)):
+    
+    user = db.query(models.User).filter(models.User.id == id).first()
+    
+    if user == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"{id} is wrong id ")
+    
+    db.delete(user)
+    db.commit()
+    
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

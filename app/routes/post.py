@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI, Response, status, HTTPException, Depends, APIRouter
-from app import models, schemas, utils
+from app import models, schemas, oauth2
 from sqlalchemy.orm import Session
 from app.database import get_db
 from typing import List
@@ -30,7 +30,9 @@ def get_post_by_id(id:int, db: Session = Depends(get_db)):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model = schemas.PostResponse)
-def create_post(post : schemas.PostBase ,db: Session = Depends(get_db)):
+def create_post(post : schemas.PostBase ,
+                db: Session = Depends(get_db), 
+                get_current_user: int =Depends(oauth2.get_current_user)):
     
 #    new_post = models.Post(title = post.title, content = post.content, published = post.published, )
 #    **post.dict() 
@@ -63,7 +65,9 @@ def update_post(id:int, post: schemas.PostBase, db: Session = Depends(get_db)):
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
+def delete_post(id: int, 
+                db: Session = Depends(get_db),
+                get_current_user: int =Depends(oauth2.get_current_user)):
     
     post = db.query(models.Post).filter(models.Post.id == id).first()
     

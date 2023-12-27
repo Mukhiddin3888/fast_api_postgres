@@ -4,14 +4,12 @@
 
 
 import time
-from fastapi import FastAPI, Response, status, HTTPException, Depends
+from fastapi import FastAPI
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from typing import List
-from sqlalchemy.orm import Session
-from app import models, schemas, utils
+from app import models
 from app.database import engine,  get_db
-from app.routes import post, user
+from app.routes import post, user, auth
 
 
 models.Base.metadata.create_all(bind = engine)
@@ -34,4 +32,5 @@ while True:
 
 app.include_router(post.router)
 app.include_router(user.router)
+app.include_router(auth.router)
 
