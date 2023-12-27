@@ -17,7 +17,7 @@ class PostCreate(PostBase):
 class PostResponse(PostBase):
     id: int
     created_at: datetime
-    
+
     class Config:
         orm_mode = True
         
