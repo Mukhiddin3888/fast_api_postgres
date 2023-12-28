@@ -14,7 +14,7 @@ router = APIRouter(
 def get_posts(db: Session = Depends(get_db), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
     
     posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
-  
+    votes_count1 = db.query(models.Vote).filter(models.Vote.post_id == models.Post.id)
     return posts
 
 
