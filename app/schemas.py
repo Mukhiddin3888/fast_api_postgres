@@ -9,6 +9,7 @@ class PostBase(BaseModel):
     title: str
     content: str
     published: bool = True
+    # owner_id: int
     
 class PostCreate(PostBase):
     pass    
@@ -17,6 +18,7 @@ class PostCreate(PostBase):
 class PostResponse(PostBase):
     id: int
     created_at: datetime
+    owner_id: int
 
     class Config:
         orm_mode = True
