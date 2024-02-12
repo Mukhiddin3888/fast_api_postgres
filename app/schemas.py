@@ -42,10 +42,18 @@ class PostResponse(PostBase):
 
     class Config:
         orm_mode = True
+
+class PostWithCountResponse(PostBase):
+    Post: PostResponse
+    votes: int
+        
         
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    
+    class Config:
+        orm_mode = True
 
 
 class Token(BaseModel):

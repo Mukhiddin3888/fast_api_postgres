@@ -5,17 +5,32 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from typing import List, Optional
 
+from sqlalchemy import func
+
 router = APIRouter(
     prefix='/posts',
     tags=['Posts']
 )
 
-@router.get("/", response_model= List[schemas.PostResponse])
+# @router.get("/", response_model= List[schemas.PostResponse])
+@router.get("/")
 def get_posts(db: Session = Depends(get_db), limit: int = 10, skip: int = 0, search: Optional[str] = ""):
     
     posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
     votes_count1 = db.query(models.Vote).filter(models.Vote.post_id == models.Post.id)
-    return posts
+    
+    # results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+    #     models.Vote, models.Vote.post_id == models.Post.id , isouter=True).group_by(models.Post.id).all()
+    
+    results = []
+    for post in posts:
+        vote_count = db.query(models.Vote).filter(models.Vote.post_id == post.id).count()
+        post_with_vote_count = {"post": post, "votes": vote_count}
+        results.append(post_with_vote_count)
+    
+    # print(results)
+    
+    return results
 
 
 

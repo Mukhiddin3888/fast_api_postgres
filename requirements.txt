@@ -1,7 +1,7 @@
 # python3 -m venv venv
 # source "/Users/abbosbobomurodov/Desktop/python tutorial/freecodecampPython/venv/bin/activate"
 # uvicorn app.main:app --reload
-
+# conda deactivate (to remove base environment)
 # pip freeze > requirements.txt
 annotated-types==0.6.0
 anyio==4.2.0
