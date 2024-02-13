@@ -9,7 +9,7 @@
 # alembic revision -m "cretate new revision"
 # alembic upgrade id (u34738975784) / head
 # alembic downgrade 876766755dge67 / -1
-
+#  heroku ps:restart 
 alembic==1.13.1
 annotated-types==0.6.0
 anyio==4.2.0
